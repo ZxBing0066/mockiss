@@ -1,8 +1,26 @@
 {
-  "name": "mocke",
+  "name": "mockiss",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZxBing0066/mockiss.git"
+  },
+  "keywords": [
+    "rapiop",
+    "spa",
+    "micro",
+    "frontend"
+  ],
+  "bugs": {
+    "url": "https://github.com/ZxBing0066/mockiss/issues"
+  },
+  "homepage": "https://github.com/ZxBing0066/mockiss#readme",
   "scripts": {
     "tsc": "tsc --watch"
   },
+  "author": "ZxBing0066",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
