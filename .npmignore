@@ -1,0 +1,13 @@
+/examples
+/docs
+/src
+/scripts
+/mock
+stats.json
+.eslintignore
+.eslintrc
+.github
+.vscode
+tsconfig.json
+yarn-error.log
+prettier.config.js
