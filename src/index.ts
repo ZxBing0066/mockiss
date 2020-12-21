@@ -3,7 +3,7 @@
 /* eslint-disable node/shebang */
 const yargs = require('yargs');
 
-const server = require('./lib/server');
+const server = require('./server');
 
 yargs.usage(`
 $0 <cmd> [args]
