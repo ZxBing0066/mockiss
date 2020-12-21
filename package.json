@@ -7,10 +7,8 @@
     "url": "git+https://github.com/ZxBing0066/mockiss.git"
   },
   "keywords": [
-    "rapiop",
-    "spa",
-    "micro",
-    "frontend"
+    "mock",
+    "mock server"
   ],
   "bugs": {
     "url": "https://github.com/ZxBing0066/mockiss/issues"
