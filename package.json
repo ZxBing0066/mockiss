@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/ZxBing0066/mockiss#readme",
   "scripts": {
-    "tsc": "tsc --watch"
+    "build": "tsc",
+    "dev": "tsc --watch"
   },
   "author": "ZxBing0066",
   "license": "MIT",
