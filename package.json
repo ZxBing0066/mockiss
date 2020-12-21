@@ -2,6 +2,9 @@
   "name": "mockiss",
   "version": "0.0.2",
   "main": "lib/index.js",
+  "bin": {
+    "mockiss": "lib/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ZxBing0066/mockiss.git"
