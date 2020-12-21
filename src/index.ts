@@ -12,7 +12,7 @@ $0 <cmd> [args]
 yargs.command(
     '$0',
     'Run mock server',
-    yargs =>
+    (yargs: any) =>
         yargs.options({
             version: {
                 alias: 'v',
