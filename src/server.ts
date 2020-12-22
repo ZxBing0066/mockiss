@@ -19,7 +19,7 @@ const server = ({
     configFile?: string;
 }) => {
     const mockDirectory = path.resolve(process.cwd(), _mockDirectory);
-    let customConfig = {};
+    let customConfig: Partial<Config> = {};
     if (configFile) {
         try {
             customConfig = require(path.resolve(process.cwd(), configFile));
@@ -29,21 +29,26 @@ const server = ({
             return;
         }
     }
-    const config: Config = {
+    const config = {
         ...defaultConfig,
-        ...customConfig
+        ...customConfig,
+        action: {
+            ...defaultConfig.action,
+            ...customConfig.action
+        }
     };
     const app = express();
     app.use(cors() as any);
     app.use(express.json()); // for parsing application/json
     app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
     app.use('*', async (req, res) => {
+        const { query, body, params } = req;
         const fullReq = {
-            ...req.body,
-            ...req.query,
-            ...req.params
+            query,
+            body,
+            params
         };
-        const { Action } = fullReq;
+        const Action = body.Action || query.Action;
         if (!Action) {
             return res.status(404).end();
         }
@@ -54,8 +59,8 @@ const server = ({
             delete require.cache[mockFile + '.json'];
             delete require.cache[mockFile + '.js'];
             let mockDefine;
-            if (config.jsonc && fs.existsSync(mockFile + '.json')) {
-                mockDefine = jsonc.parse(fs.readFileSync(mockFile + '.json').toString());
+            if (config.jsonc && fs.existsSync(mockFile + '.jsonc')) {
+                mockDefine = jsonc.parse(fs.readFileSync(mockFile + '.jsonc').toString());
             } else {
                 mockDefine = require(mockFile);
             }
@@ -67,8 +72,10 @@ const server = ({
             const data = MockJS.mock(mockDefine);
             response = data;
         } catch (error) {
-            response = config.getResponseFromError(error, fullReq);
+            response = config.action.getResponseFromError(error, fullReq);
         }
+        // rewrite response before send
+        if (config.action.handleResponse) response = config.action.handleResponse(response, fullReq);
         // before response send, wait
         if (config.delay) {
             let delay;

@@ -1,6 +1,18 @@
-interface Req {
-    Action: string;
+interface Query {
+    Action?: string;
     [key: string]: any;
+}
+interface Body {
+    Action?: string;
+    [key: string]: any;
+}
+interface Params {
+    [key: string]: any;
+}
+interface Req {
+    query: Query;
+    body: Body;
+    params: Params;
 }
 interface Res {
     Action?: string;
@@ -9,55 +21,64 @@ interface Res {
 }
 
 export interface Config {
-    /**
-     * get response when mock error
-     */
-    getResponseFromError: {
-        (error: Error, req: Req): any;
-    };
-    /**
-     * handle response before response send
-     */
-    handleResponse: {
-        (res: Res, req: Req): Res;
+    /** config for action type apis */
+    action: {
+        /**
+         * get response when mock error
+         */
+        getResponseFromError: {
+            (error: Error, req: Req): any;
+        };
+        /**
+         * handle response before response send
+         */
+        handleResponse?: {
+            (res: Res, req: Req): Res;
+        };
     };
     /**
      * will delay before response send, wait for delay ms, or between min - max ms
      */
     delay?: number | [number, number];
-    /** weather to use jsonc */
+    /** whether to use jsonc */
     jsonc?: boolean;
-    /** weather to use mockjs */
+    /** whether to use mockjs */
     mockjs?: boolean;
 }
 
 const defaultConfig: Config = {
-    getResponseFromError: function (error, req) {
-        if ((error as any).code === 'MODULE_NOT_FOUND') {
-            return {
-                Error: "Can't find mock module: " + req.Action,
-                RetCode: 404,
-                Message: 'Mock Action: ' + req.Action + 'fail'
-            };
-        }
-        return {
-            Error: error,
-            RetCode: 502,
-            Message: 'Mock Action: ' + req.Action + 'fail'
-        };
-    },
-    handleResponse: function (res, req) {
-        if (!res.Action) {
-            res.Action = req.Action + 'Response';
-        }
-        if (!('RetCode' in res)) {
-            if (res.Error) {
-                res.RetCode = 500;
-            } else {
-                res.RetCode = 0;
+    action: {
+        getResponseFromError: function (error, req) {
+            const { query, body } = req;
+            const Action = body.Action || query.Action;
+            if ((error as any).code === 'MODULE_NOT_FOUND') {
+                return {
+                    Error: "Can't find mock module: " + Action,
+                    RetCode: 404,
+                    Message: 'Mock Action: ' + Action + ' fail'
+                };
             }
+            return {
+                Error: error,
+                RetCode: 502,
+                Message: 'Mock Action: ' + Action + ' fail'
+            };
+        },
+        handleResponse: function (res, req) {
+            const { query, body } = req;
+            let Action = body.Action || query.Action;
+            if (!res.Action) {
+                res.Action = Action + 'Response';
+            }
+            if (!('RetCode' in res)) {
+                if (res.Error) {
+                    res.RetCode = 500;
+                } else {
+                    res.RetCode = 0;
+                }
+            }
+            return res;
         }
-        return res;
     },
     jsonc: true,
     mockjs: true

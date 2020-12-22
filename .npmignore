@@ -11,3 +11,4 @@ stats.json
 tsconfig.json
 yarn-error.log
 prettier.config.js
+/tests
